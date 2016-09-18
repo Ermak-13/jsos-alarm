@@ -8,6 +8,6 @@ OS.installModule('TODO', {
   Shortcut: Shortcut
 });
 
-chrome.alars.onAlarm.addListener(function (alarm) {
+chrome.alarms.onAlarm.addListener(function (alarm) {
   alert('Welcome to My World');
 });
