@@ -49,13 +49,13 @@ var _Widget = React.createClass({
     var types = {
       today: function (time) {
         chrome.alarms.create(this.getAlarmName(type, time), {
-          when: this.parseTime(time).toDate() - moment()
+          when: this.parseTime(time) - moment()
         });
       }.bind(this),
 
       tomorrow: function () {
         chrome.alarms.create(this.getAlarmName(type, time), {
-          when: this.parseTime(time).add(1, 'days').toDate() - moment()
+          when: this.parseTime(time).add(1, 'days') - moment()
         });
       }.bind(this)
     };
