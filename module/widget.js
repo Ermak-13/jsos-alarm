@@ -75,7 +75,7 @@ var _Widget = React.createClass({
       _moment.minutes(_time.minutes());
 
       return _moment;
-    };
+  },
 
   _getSettings: function () {
     return {

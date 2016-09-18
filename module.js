@@ -9,7 +9,7 @@ OS.installModule('TODO', {
   Shortcut: Shortcut
 });
 
-chrome.alars.onAlarm.addListener(function (alarm) {
+chrome.alarms.onAlarm.addListener(function (alarm) {
   alert('Welcome to My World');
 });
 
@@ -110,7 +110,28 @@ var _Widget = React.createClass({displayName: "_Widget",
   },
 
   createAlarm: function (time, type) {
-    var parseTime = function () {
+    var types = {
+      today: function (time) {
+        chrome.alarms.create(this.getAlarmName(), {
+          when: this.parseTime(time).toDate()
+        });
+      },
+
+      tomorrow: function () {
+        chrome.alarms.create(this.getAlarmName(), {
+          when: this.parseTime(time).add(1, 'days').toDate()
+        });
+      }
+    };
+
+    types[type](time);
+  },
+
+  getAlarmName: function (type, time) {
+    return sprintf('jsos-%s-%s', type, time);
+  },
+
+  parseTime: function (time) {
       var _time = moment(time, 'HH:mm'),
           _moment = moment();
 
@@ -118,21 +139,6 @@ var _Widget = React.createClass({displayName: "_Widget",
       _moment.minutes(_time.minutes());
 
       return _moment;
-    };
-
-    var types = {
-      today: function (time) {
-
-        chrome.alarms.create("today-1", {
-          when: _moment.toDate()
-        });
-      },
-
-      tomorrow: function () {
-      }
-    };
-
-    types[type](time);
   },
 
   _getSettings: function () {
