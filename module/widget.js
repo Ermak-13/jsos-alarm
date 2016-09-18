@@ -48,7 +48,7 @@ var _Widget = React.createClass({
   createAlarm: function (time, type) {
     var types = {
       today: function (time) {
-        chrome.alarms.create(this.getAlarmName(type, time), {
+        chrome.alarms.create("TMP", {
           when: this.parseTime(time).toDate()
         });
       },
