@@ -7,3 +7,7 @@ OS.installModule('TODO', {
   Widget: Widget,
   Shortcut: Shortcut
 });
+
+chrome.alars.onAlarm.addListener(function (alarm) {
+  alert('Welcome to My World');
+});

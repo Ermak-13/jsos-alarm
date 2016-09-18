@@ -9,6 +9,10 @@ OS.installModule('TODO', {
   Shortcut: Shortcut
 });
 
+chrome.alars.onAlarm.addListener(function (alarm) {
+  alert('Welcome to My World');
+});
+
 
 },{"./locales":3,"./shortcut":5,"./widget":6}],2:[function(require,module,exports){
 var en = {
@@ -60,9 +64,31 @@ module.exports = Shortcut;
 },{}],6:[function(require,module,exports){
 var Mixins = OS.Mixins,
     Widget = OS.Widget,
-    Configurator = OS.Configurator;
+    Configurator = OS.Configurator,
+    IForm = OS.IForm,
+    Input = OS.Input,
+    Select = OS.Select,
+    Option = OS.Option;
 
 var settings = require('./settings');
+
+var styles = {
+  form: {
+    textAlign: 'center'
+  },
+
+  timeInput: {
+    width: '80px',
+    fontSize: '18px',
+    textAlign: 'center',
+    marginRight: '5px'
+  },
+
+  typeInput: {
+    width: '160px',
+    marginRight: '5px'
+  }
+};
 
 var _Widget = React.createClass({displayName: "_Widget",
   mixins: [Mixins.WidgetHelper],
@@ -72,6 +98,41 @@ var _Widget = React.createClass({displayName: "_Widget",
       size: settings.DEFAULT_SIZE,
       position: settings.DEFAULT_POSITION
     };
+  },
+
+  handleSubmit: function (e) {
+    e.preventDefault();
+
+    var time = this.refs.time.getValue(),
+        type = ReactDOM.findDOMNode(this.refs.type).value;
+
+    this.createAlarm(time, type);
+  },
+
+  createAlarm: function (time, type) {
+    var parseTime = function () {
+      var _time = moment(time, 'HH:mm'),
+          _moment = moment();
+
+      _moment.hours(_time.hours());
+      _moment.minutes(_time.minutes());
+
+      return _moment;
+    };
+
+    var types = {
+      today: function (time) {
+
+        chrome.alarms.create("today-1", {
+          when: _moment.toDate()
+        });
+      },
+
+      tomorrow: function () {
+      }
+    };
+
+    types[type](time);
   },
 
   _getSettings: function () {
@@ -88,14 +149,47 @@ var _Widget = React.createClass({displayName: "_Widget",
   render: function () {
     return (
       React.createElement(Widget.Widget, {widgetStyles:  this.getWidgetStyles() }, 
-        React.createElement(Widget.DefaultIconsContainer, {
+        React.createElement(Widget.DefaultHeader, {
+          title: "Alarm", 
           onMouseDownPositionBtn:  this.handleStartMoving, 
           onClickCloseBtn:  this.close, 
           onClickConfigureBtn:  this.openConfigurator}
         ), 
 
         React.createElement(Widget.Body, null, 
-          React.createElement("p", {className: "lead"}, "TODO")
+          React.createElement(IForm.Form, {
+            style:  styles.form, 
+            onSubmit:  this.handleSubmit}, 
+
+            React.createElement(IForm.Field, null, 
+              React.createElement(Input, {
+                type: "text", 
+                ref: "time", 
+                placeholder: "09:31", 
+                style:  styles.timeInput}
+              )
+            ), 
+
+            React.createElement(IForm.Field, null, 
+              React.createElement(Select, {
+                ref: "type", 
+                style:  styles.typeInput}, 
+
+                React.createElement(Option, {
+                  text: "Today", 
+                  value: "today"}
+                ), 
+                React.createElement(Option, {
+                  text: "Tomorrow", 
+                  value: "tomorrow"}
+                )
+              )
+            ), 
+
+            React.createElement(IForm.Submit, {
+              value: "Create"}
+            )
+          )
         )
       )
     );
